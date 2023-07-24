@@ -1,0 +1,16 @@
+{
+      "rules": {
+        "quotemark": [true,"single"],
+        "max-classes-per-file": false,
+        "no-console": false,
+        "max-line-length": [true, 140],
+        "no-shadowed-variable": false,
+        "radix": false,
+        "no-empty": false,
+        "no-var-requires": false
+    },
+    "extends": [
+        "tslint:recommended",
+        "tslint-config-prettier"
+      ]
+}

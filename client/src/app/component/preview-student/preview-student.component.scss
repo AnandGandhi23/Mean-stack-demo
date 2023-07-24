@@ -1,0 +1,82 @@
+.preview-wrapper {
+    padding: 50px;
+    margin: 50px 0;
+    background-color: #fff;
+    border-radius: 14px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
+}
+
+.image-preview {
+    width: 150px;
+    min-width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 24px;
+    background: #777;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-wrapper .btn-group-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.preview-wrapper .btn-group-wrapper .btn {
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 40px;
+    padding: 0 24px;
+}
+
+.preview-wrapper .btn-group-wrapper .btn.btn-edit {
+    background: #01987a;
+    color: #fff;
+    border: 1px solid #01987a;
+}
+
+.preview-wrapper .btn-group-wrapper .btn.btn-edit:hover {
+    border: 1px solid #01987a;
+    background: #047c64;
+}
+
+.preview-wrapper .btn-group-wrapper .btn.btn-home {
+    background: #01987a;
+    color: #fff;
+    border: 1px solid #01987a;
+}
+
+.preview-wrapper .btn-group-wrapper .btn.btn-home:hover {
+    border: 1px solid #01987a;
+    background: #047c64;
+}
+
+.preview-wrapper .btn-group-wrapper .btn.btn-delete {
+    border: 1px solid darkred;
+    color: darkred;
+}
+
+.preview-wrapper .btn-group-wrapper .btn.btn-delete:hover {
+    background: darkred;
+    color: #fff;
+}
+
+.side-wrap .form-group {
+    display: flex;
+    align-items: center;
+}
+
+.side-wrap .form-group .user-data {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.side-wrap .form-group label {
+    font-weight: 600;
+}

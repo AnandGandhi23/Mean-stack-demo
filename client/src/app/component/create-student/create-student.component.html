@@ -1,0 +1,89 @@
+<div class="main-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="row">
+                    <div class="col-md-12">  
+                        <div class="form-main-wrapper">
+                            <h4>Register</h4>
+                            <form (ngSubmit)="onCreate()" [formGroup]="studentForm" *ngIf="studentForm">
+                                <div class="form-group row">
+                                    <label for="First Name" class="col-sm-3 col-form-label">First Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" formControlName="firstName" placeholder="Enter First Name" />
+                                        <div *ngIf="
+                                studentForm.controls['firstName'].invalid &&
+                                (studentForm.controls['firstName'].dirty ||
+                                  studentForm.controls['firstName'].touched)
+                              " class="error" role="alert">
+                                            <span>Invalid first name</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="Last Name" class="col-sm-3 col-form-label">Last Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" formControlName="lastName" placeholder="Enter Last Name" />
+                                        <div *ngIf="
+                                studentForm.controls['lastName'].invalid &&
+                                (studentForm.controls['lastName'].dirty ||
+                                  studentForm.controls['lastName'].touched)
+                              " class="error" role="alert">
+                                            <span>Invalid last name</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                    <div class="col-sm-9">
+                                        <input type="email" formControlName="email" placeholder="Enter Email" />
+                                        <div *ngIf="
+                                studentForm.controls['email'].invalid &&
+                                (studentForm.controls['email'].dirty ||
+                                  studentForm.controls['email'].touched)
+                              " class="error" role="alert">
+                                            <span>Invalid email</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" formControlName="phone" placeholder="Enter Phone number" />
+                                        <div *ngIf="
+                                studentForm.controls['phone'].invalid &&
+                                (studentForm.controls['phone'].dirty ||
+                                  studentForm.controls['phone'].touched)
+                              " class="error" role="alert">
+                                            <span>Invalid phone number</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="First Name" class="col-sm-3 col-form-label">Image</label>
+                                    <div class="col-sm-9">
+                                        <div class="upload-btn-wrapper">
+                                            <img class="mr-2" *ngIf="this.isEdit" [src]="studentForm.controls['profileImage'].value"
+                                                height="100px" width="100px" alt="img" />
+                                            <div class="btn-file">
+                                                <button class="btn">Upload a file</button>
+                                                <input type="file" formControlName="profileImage" name="myfile"
+                                                    (change)="onChange($event)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn-submit">
+                                    <a routerLink="/"><button class="btn-home">Home</button></a>
+            
+                                    <button>Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+.form-main-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.main-form {
+    width: 100%;
+    height: 100vh;
+}
+
+.form-main-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    margin: 32px auto;
+    overflow: auto;
+    padding: 32px;
+    background-color: #01987a;
+    color: white;
+    border-radius: 8px;
+}
+
+.form-main-wrapper form {
+    width: 100%;
+}
+
+.form-main-wrapper h4 {
+    margin-bottom: 24px;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.form-main-wrapper form .form-group {
+    margin-bottom: 16px;
+}
+
+.form-main-wrapper form input {
+    border: 1px solid #333;
+    height: 42px;
+    border-radius: 6px;
+    padding: 0 16px;
+    width: 100%;
+}
+
+.form-main-wrapper form input[type="file"] {
+    border: none;
+    padding: 0;
+}
+
+.btn-submit {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-home {
+    margin-right: 10px;
+    border: 1px solid #fff !important;
+    background: transparent !important;
+    color: #fff !important  ;
+}
+.btn-home:hover {
+    border: 1px solid transparent !important;
+    background: #fff !important;
+    color: #01987a !important  ;
+}
+
+.btn-submit button {
+    background: #fff;
+    border: 1px solid transparent;
+    color: #01987a;
+    border-radius: 8px;
+    font-size: 18px;
+    padding: 0 24px;
+    line-height: 42px;
+    transition: all 0.3s linear;
+}
+
+.btn-submit button:hover {
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff;
+}
+
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.btn {
+    border: 2px solid gray;
+    color: gray;
+    background-color: white;
+    padding: 5px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.upload-btn-wrapper input[type="file"] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.btn-file {
+    display: flex;
+    align-items: center;
+    position: relative;
+}

@@ -1,0 +1,220 @@
+#!/usr/bin/env groovy
+import groovy.json.JsonOutput
+
+def project = "bag"
+def region  = "us-west-2"
+
+def vars = [
+  staging: [
+    env             : "staging",
+    node_env        : "staging",
+    instance_profile: "bag-staging-instance-profile",
+    vpc_filter      : "bag-dev-staging",
+    subnet_filter   : "bag-dev-staging-public-*"
+  ],
+  master: [
+    env             : "prod",
+    node_env        : "production",
+    instance_profile: "bag-prod-instance-profile",
+    vpc_filter      : "bag-prod",
+    subnet_filter   : "bag-prod-public-*"
+  ]
+]
+
+def repos = [
+  operations: [
+    url        : "https://bitbucket.org/batchleads/batch-ops.git",
+    credentials: "bitbucket-app-creds",
+    branch     : "dev",
+    folder     : "operations"
+  ]
+]
+
+deployAllowed = vars.keySet() as String[]
+defaultBranch = "staging"
+vars          = vars."${env.BRANCH_NAME}" ?: vars."${defaultBranch}"
+deployEnv     = vars.env
+
+def server_types = [
+  app: [
+    lt_name : "${project}-${vars.env}-app-lt",
+    ami_name: "${project}-${vars.env}-app",
+    asg_name: "${project}-${vars.env}-app",
+    env_file: "${project}/${vars.env}/app"
+  ]
+]
+
+def packer_requirements = [
+  env             : deployEnv,
+  region          : region,
+  project         : project,
+  branch          : env.BRANCH_NAME,
+  node_env        : vars.node_env,
+  vpc_filter      : vars.vpc_filter,
+  subnet_filter   : vars.subnet_filter,
+  instance_profile: vars.instance_profile
+]
+
+node {
+  if (env.BRANCH_NAME in deployAllowed) {
+    stage('Checkout app repo') {
+      try {
+        vars.server_types_list   = server_types.keySet() as String[]
+        currentBuild.description = vars.server_types_list.join(', ')
+        notifySlack('STARTED', "AMIs: ${currentBuild.description}")
+        cleanWs()
+        checkout scm
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+
+    stage('Build') {
+      try {
+        sh """
+          PATH="${tool 'Node14'}/bin:${PATH}"
+          node --version
+          rm -rf node_modules package-lock.json
+          npm install
+          npm run build
+        """
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+
+    stage("Checkout operation repo") {
+      try {
+        gitCheckout(repos.operations)
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+
+    stage('Ansible requirements') {
+      try {
+        def dest = "${repos.operations.folder}/ansible/playbooks/roles/${project}/files"
+        sh """
+          tar -czf ${dest}/dist.tgz -C dist/ .
+          aws ssm get-parameter \
+            --name '/${project}/bitbucket/ssh_key' \
+            --with-decryption \
+            --query 'Parameter.Value' \
+            --output text > ${dest}/ssh_key
+        """
+        server_types.each { k,v ->
+          sh """
+            export AWS_DEFAULT_REGION=${region}
+            aws secretsmanager get-secret-value \
+              --secret-id '${v.env_file}' \
+              --query 'SecretString' \
+              --output text > \
+            ${dest}/${k}.env
+          """
+        }
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+
+    stage("Create AMIs") {
+      try {
+        sh """
+          export AWS_DEFAULT_REGION=${region}
+          cd '${repos.operations.folder}/packer/${project}'
+          packer init .
+          packer build \
+            -color=false \
+            -timestamp-ui \
+            -only "${AMIsToBuild(vars.server_types_list)}" \
+            ${packerVars(packer_requirements)} .
+        """
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+
+    stage("Update Launch teplate version") {
+      try {
+        server_types.each { k, v ->
+          sh """
+          export AWS_DEFAULT_REGION=${region}
+          cd '${repos.operations.folder}/scripts'
+          /bin/bash update_launch_template.sh "${v.lt_name}" "${v.ami_name}"
+          """
+        }
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+
+    stage("Update servers") {
+      try {
+        ir_updates = server_types.collectEntries { server, v -> [
+          "${server}": performInstanceRefresh(region, repos.operations.folder, v.asg_name)
+        ]}
+        parallel ir_updates
+        notifySlack('SUCCESS', "AMIs: ${currentBuild.description}")
+      } catch (Exception e) {
+        handleError(e, STAGE_NAME)
+        throw (e)
+      }
+    }
+  }
+}
+
+def handleError(Exception e, String errMsg) {
+  print e.message
+  currentBuild.result = 'FAILURE'
+  cleanWs()
+  notifySlack('FAILURE', errMsg)
+}
+
+def notifySlack(String result = 'SUCCESS', String msg = "") {
+  def colorMap = [
+    'STARTED' : '#D4DADF',
+    'SUCCESS' : 'good',
+    'UNSTABLE': 'warning',
+    'FAILURE' : 'danger'
+  ]
+  slackMsg = "*${result}*\nJob: ${java.net.URLDecoder.decode(JOB_NAME)}\nBuild_NO: #${env.BUILD_NUMBER}\n(<${env.BUILD_URL}console|Open>)"
+  slackMsg = !msg?.trim() ? slackMsg : slackMsg + "\n*${msg}*"
+  slackSend(color: colorMap."${result}", message: slackMsg)
+}
+
+def gitCheckout(Map gitParams) {
+  checkout([
+    $class                           : 'GitSCM',
+    branches                         : [[name: gitParams.branch ? "*/${gitParams.branch}" : "*"]],
+    doGenerateSubmoduleConfigurations: false,
+    extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: gitParams.folder],
+                                        [$class: 'CheckoutOption', timeout: 2]],
+    submoduleCfg                     : [],
+    userRemoteConfigs                : [[credentialsId: gitParams.credentials, url: gitParams.url]]
+  ])
+}
+
+def AMIsToBuild(def server_types_list) {
+  return server_types_list.collect { "AMI-build.amazon-ebs.${it}" }.join(",")
+}
+
+def packerVars(def packer_requirements) {
+  return packer_requirements.collect { "-var '$it.key=$it.value'" }.join(" ")
+}
+
+def performInstanceRefresh(region, folder, asgName) {
+  return {
+    sh """
+      set -xe
+      export AWS_DEFAULT_REGION=${region}
+      cd '${folder}/scripts'
+      /bin/bash instance_refresh.sh "${asgName}"
+    """
+  }
+}

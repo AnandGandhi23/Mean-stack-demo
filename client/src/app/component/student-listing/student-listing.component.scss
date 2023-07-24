@@ -1,0 +1,77 @@
+.main-wrapper {
+    width: 100%;
+    padding: 50px 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+}
+
+.main-wrapper .btn-add {
+    border: none;
+    border-radius: 12px;
+    background: #01987a;
+    color: #fff;
+    font-size: 16px;
+    line-height: 40px;
+    padding: 0 24px;
+}
+
+.main-wrapper .table-wrapper {
+    max-width: 100%;
+    height: auto;
+    overflow: auto;
+}
+
+.main-wrapper .table-wrapper table {
+    border-collapse: collapse;
+    font-size: 0.9em;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.main-wrapper .table-wrapper table thead tr th {
+    background: #01987a;
+    color: #fff;
+    padding: 10px 16px;
+}
+
+.table-wrapper table tbody tr td .btn {
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: transparent;
+    padding: 3px 10px;
+}
+.table-bordered {
+    border: 1px solid #ddd;
+}
+.table-wrapper table tbody tr td, .table-wrapper table tbody tr th {
+    border: 1px solid #ddd;
+    padding: 10px 16px; 
+}
+.table-wrapper table tbody tr td .btn.btn-edit:hover,
+.table-wrapper table tbody tr td .btn.btn-view:hover {
+    background: #01987a;
+    color: #fff;
+    border: 1px solid #01987a;
+}
+
+.table-wrapper table tbody tr td .btn.btn-delete:hover {
+    background: darkred;
+    color: #fff;
+    border: 1px solid darkred;
+}
+.btn-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 24px;
+    input {
+        border: 1px solid #01987a;
+        border-radius: 8px;
+        padding: 0 16px;
+        width: 320px;
+        outline: none;
+        box-shadow: none;
+        
+        }
+}

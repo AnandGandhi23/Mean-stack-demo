@@ -1,0 +1,80 @@
+<div class="container">
+    <div class="row">
+      <div class="col-md-9 mx-auto">
+        <div class="main-wrapper">
+          <div class="btn-wrapper">
+            <input type="text"  placeholder="Search here" (input)="this.searchFilter$.next($event)" />
+            <button [routerLink]="'/createStudent'" class="btn-add">
+              Add Student
+            </button>
+          </div>
+              <div class="table-wrapper">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Index</th>
+                      <th scope="col">First Name</th>
+                      <th scope="col">Last Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">ProfileImage</th>
+                      <th scope="col">View</th>
+                      <th scope="col">Edit</th>
+                      <th scope="col">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="students && students.length; else no_records">
+                      <ng-container *ngFor="let student of students; let i = index">
+                        <tr>
+                          <th scope="row">{{ i + 1 }}</th>
+                          <td>{{ student.firstName }}</td>
+                          <td>{{ student.lastName }}</td>
+                          <td>{{ student.email }}</td>
+                          <td>{{ student.phone }}</td>
+                          <td>
+                            <img
+                              [src]="student.profileImage"
+                              height="100px"
+                              width="100px"
+                              alt="img"
+                            />
+                          </td>
+                          <td>
+                            <button
+                              class="btn btn-view"
+                              (click)="onPreview(student._id)"
+                            >
+                              View
+                            </button>
+                          </td>
+                          <td>
+                            <button class="btn btn-edit" (click)="onEdit(student._id)">
+                              Edit
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              class="btn btn-delete"
+                              (click)="onDelete(student._id)"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </ng-container>
+                  </tbody>
+                  <ng-template #no_records>
+                    <tr>
+                      <td colspan="9">No records found</td>
+                    </tr>
+                  </ng-template>
+                </table>
+              </div>
+            </div>
+      </div>
+  
+    </div>
+  </div>
+  
