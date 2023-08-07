@@ -90,10 +90,12 @@ export class ServerConfig {
   private initializeMongoDb(dbName: string, dbUri: string) {
     // this.database.addDatabaseUri(dbName, dbUri);
 
-    const dbUrl = `${dbUri}${dbName}`;
+    // const dbUrl = `${dbUri}/${dbName}`;
+    // mongodb+srv://anandgandhi19:DhSEIhJKXlOm0OQB@cluster0.40wogg8.mongodb.net/?retryWrites=true&w=majority
+    const connectionString = 'mongodb+srv://anandgandhi19:DhSEIhJKXlOm0OQB@cluster0.40wogg8.mongodb.net/Test?retryWrites=true&w=majority'
     mongoose.set('strictQuery', true);
     mongoose
-      .connect(dbUrl)
+      .connect(connectionString)
       .then(() => {
         console.log('-> MongoDB Connected');
       })

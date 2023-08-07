@@ -7,7 +7,7 @@ import { StudentService } from '../../services/student/student.service';
 import { upload } from '../../util/upload.util';
 
 /**
- * The api token controller
+ * The student controller
  */
 @controller('/student')
 export class StudentController {
@@ -29,12 +29,7 @@ export class StudentController {
   public async getAllStudents(request: Request, response: Response) {
     try {
       const students = await this.studentService.getAllStudents();
-
-      // console.log('students --', students);
-
       return response.status(200).json(students);
-
-      //   return new ControllerResult(200, students);
     } catch (error) {
       console.log('error -> ', error);
       const response = new ControllerResult<null>(500);
@@ -48,13 +43,8 @@ export class StudentController {
   @httpGet('/get-student-by-id/:id')
   public async getStudentById(reqest: Request, response: Response) {
     try {
-      // console.log(reqest.params.id);
-
       const student = await this.studentService.getStudentById(reqest.params.id);
-
       return response.status(200).json({ student });
-
-      // return new ControllerResult(200, student);
     } catch (error) {
       console.log('error -> ', error);
       const response = new ControllerResult<null>(500);
@@ -63,18 +53,13 @@ export class StudentController {
   }
 
   /**
-   * Get student by Id
+   * Delete student by Id
    */
   @httpDelete('/delete-student-by-id/:id')
   public async deleteStudentById(reqest: Request, response: Response) {
     try {
-      // console.log(reqest.params.id);
-
       const student = await this.studentService.deleteStudentById(reqest.params.id);
-
       return response.status(200).json({ status: 'success' });
-
-      // return new ControllerResult(200, student);
     } catch (error) {
       console.log('error -> ', error);
       const response = new ControllerResult<null>(500);
@@ -88,14 +73,10 @@ export class StudentController {
   @httpPost('/', upload)
   public async addStudent(reqest: Request, response: Response) {
     try {
-      // console.log('reqest.body=====', reqest.body);
-
       console.log(reqest.body);
       const student = await this.studentService.addStudent(reqest);
 
       return response.status(201).json({ status: 'success' });
-
-      // return new ControllerResult(200, { status: 'success' });
     } catch (error) {
       console.log('error -> ', error);
       // const response = new ControllerResult<null>(500);

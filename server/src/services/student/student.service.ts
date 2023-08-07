@@ -84,15 +84,20 @@ export class StudentService {
                 reject('Student does not exists');
               }
             } else {
-              const data = new StudentModel({
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: req.body.email,
-                phone: req.body.phone,
-                profileImage: result.url,
-              });
-              const user = await data.save();
-              resolve(user);
+              const student = await StudentModel.find({email: req.body.email});
+              if (student) {
+                reject('Email already exist');
+              } else {
+                const data = new StudentModel({
+                  firstName: req.body.firstName,
+                  lastName: req.body.lastName,
+                  email: req.body.email,
+                  phone: req.body.phone,
+                  profileImage: result.url,
+                });
+                const user = await data.save();
+                resolve(user);
+              }
             }
           }
         }

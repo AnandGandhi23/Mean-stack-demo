@@ -18,7 +18,6 @@ export class StudentListingComponent {
     private spinner: NgxSpinnerService
   ) {
     this.getStudents();
-
     this.searchFilter$.pipe(debounceTime(600)).subscribe((event) => {
       this.filterStudents((<HTMLTextAreaElement>event.target).value);
     });
@@ -33,8 +32,6 @@ export class StudentListingComponent {
       });
     } catch (error) {
       console.log('-> Error occurred while getting students: ', error);
-    } finally {
-      this.spinner.hide();
     }
   }
 
@@ -42,17 +39,19 @@ export class StudentListingComponent {
     try {
       this.spinner.show();
       if (value) {
-        this.studentService.filterStudents(value).subscribe((res: any) => {
-          this.students = res;
+        if (value.length > 3) {
+          this.studentService.filterStudents(value).subscribe((res: any) => {
+            this.students = res;
+            this.spinner.hide();
+          });
+        } else {
           this.spinner.hide();
-        });
+        }
       } else {
         this.getStudents();
       }
     } catch (error) {
       console.log('-> Error occurred while filtering students: ', error);
-    } finally {
-      this.spinner.hide();
     }
   }
 
@@ -65,7 +64,7 @@ export class StudentListingComponent {
   }
 
   onDelete(id: string) {
-    if (confirm('Are you sure want to delete')) {
+    if (confirm('Are you sure want to delete this user?')) {
       try {
         this.spinner.show();
         this.studentService.deleteStudent(id).subscribe((res: any) => {
@@ -78,8 +77,6 @@ export class StudentListingComponent {
         });
       } catch (error) {
         console.log('-> Error occurred while deleting a student: ', error);
-      } finally {
-        this.spinner.hide();
       }
     }
   }

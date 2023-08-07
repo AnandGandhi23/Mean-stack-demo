@@ -6,7 +6,6 @@ export interface IUser extends Document {
   email: string;
   phone: number;
   profileImage: string;
-  createdAt?: Date;
 }
 
 const studentSchema: Schema<IUser> = new Schema<IUser>(
